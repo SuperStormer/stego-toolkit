@@ -8,7 +8,6 @@ import md5
 import argparse
 import threading
 import subprocess
-from tqdm import tqdm
 
 
 class ThreadedCracker(threading.Thread):
@@ -150,14 +149,13 @@ def parse_args():
 
 def bruteforce(Cracker, stego_file, wordlist, num_threads):
     pool = threading.BoundedSemaphore(value=num_threads)
-    with tqdm(total=get_num_passphrases(wordlist)) as progress_bar:
-        for passphrase in wordlist:
-            passphrase = passphrase.strip()
-            try:
-                Cracker(pool, (stego_file, passphrase)).crack()
-            except:
-                print("Error: could not start thread")
-            progress_bar.update(1)
+    #TODO: fix progress bar
+	for passphrase in wordlist:
+		passphrase = passphrase.strip()
+		try:
+			Cracker(pool, (stego_file, passphrase)).crack()
+		except:
+			print("Error: could not start thread")
 
 
 def get_num_passphrases(wordlist):

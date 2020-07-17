@@ -1,36 +1,35 @@
-FROM debian:stretch-20170907
+FROM debian:buster-slim as build
 
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update && \
+#see https://github.com/debuerreotype/docker-debian-artifacts/issues/24
+RUN mkdir -p /usr/share/man/man1 && \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y apt-utils \
-                       forensics-all \
+                       file \
                        foremost \
                        binwalk \
                        exiftool \
                        outguess \
                        pngtools \
                        pngcheck \
-                       stegosuite \
                        git \
                        hexedit \
                        python3-pip \
                        python-pip \
-                       autotools-dev \
                        automake \
                        libevent-dev \
-                       bsdmainutils \
                        ffmpeg \
                        crunch \
                        cewl \
-                       sonic-visualiser \
                        xxd \
-                       atomicparsley && \
-    pip3 install python-magic && \
-    pip install tqdm
+                       atomicparsley \
+                       wget
 
-COPY install /tmp/install
+
+FROM build AS terminal
+
+COPY install/terminal /tmp/install
 RUN chmod a+x /tmp/install/*.sh && \
     for i in /tmp/install/*.sh;do echo $i && $i;done && \
     rm -rf /tmp/install
@@ -45,9 +44,23 @@ RUN chmod a+x /tmp/install/*.sh && \
 
 COPY examples /examples
 
-COPY scripts /opt/scripts
+COPY scripts/terminal /opt/scripts
 RUN find /opt/scripts -name '*.sh' -exec chmod a+x {} + && \
     find /opt/scripts -name '*.py' -exec chmod a+x {} +
 ENV PATH="/opt/scripts:${PATH}"
 
 WORKDIR /data
+CMD ["/bin/bash"]
+
+FROM terminal as gui
+
+COPY install/gui /tmp/install
+RUN chmod a+x /tmp/install/*.sh && \
+    for i in /tmp/install/*.sh;do echo $i && $i;done && \
+    rm -rf /tmp/install
+
+COPY scripts/gui /opt/scripts
+RUN find /opt/scripts -name '*.sh' -exec chmod a+x {} + && \
+    find /opt/scripts -name '*.py' -exec chmod a+x {} +
+
+CMD ["/bin/bash"]
