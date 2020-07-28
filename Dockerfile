@@ -17,7 +17,6 @@ RUN mkdir -p /usr/share/man/man1 && \
                        hexedit \
                        python3-pip \
                        python-pip \
-                       automake \
                        libevent-dev \
                        ffmpeg \
                        crunch \
