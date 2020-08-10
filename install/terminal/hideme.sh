@@ -17,3 +17,4 @@ mv /tmp/audio_stego/build/hideme /usr/bin/hideme
 # Clean up
 rm -rf /tmp/audio_stego
 apt-get remove -y cmake
+apt-get autoremove -y

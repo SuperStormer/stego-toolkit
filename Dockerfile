@@ -23,7 +23,8 @@ RUN mkdir -p /usr/share/man/man1 && \
                        cewl \
                        xxd \
                        atomicparsley \
-                       wget
+                       wget && \
+    pip install tqdm
 
 
 FROM build AS terminal
